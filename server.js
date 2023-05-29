@@ -1,5 +1,5 @@
 const express = require('express');
-const { MongoClient } = ('mongodb');
+const { MongoClient } = require('mongodb');
 
 const app = express();
 const port = 3001;
@@ -26,3 +26,34 @@ client.connect()
     });
 
     app.use(express.json());
+
+    //crete new user
+    app.post('/createuser', (req, res) => {
+        db.collection('newUser').insertOne(
+            { username: req.body.username, email: req.body.email, thoughts: req.body.email, friends: req.body.friends}
+        )
+            .then(results => res.json(results))
+            .catch(err => {
+                if(err) throw err;
+            });
+    });
+
+    app.post('/createthought', (req, res) => {
+        db.collection('newThought').insertOne(
+            { thoughtText: req.body.thoughtText, createdAt: req.body.createdAt, username: req.body.username, reactions: req.body.reactions}
+        )
+            .then(results => res.json(results))
+            .catch(err => {
+                if(err) throw err;
+            });
+    });
+
+    app.get('/users', (req, res) => {
+        db.collection('users')
+        .find()
+        .toArray()
+        .then(results => res.json(results))
+        .catch(err => {
+            if (err) throw err;
+        });
+    });
