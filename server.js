@@ -59,6 +59,16 @@ client.connect()
         });
     });
 
+    app.get('/thoughts', (req, res) => {
+        db.collection('thoughts')
+        .find()
+        .toArray()
+        .then(results => res.json(results))
+        .catch(err => {
+            if (err) throw err;
+        });
+    });
+
     //this should allow updating a user but I can't get this part to work. It does return a JSON but it's not updating anything
     app.put('/updateuser', (req, res) => {
         db.collection('users').updateOne(
