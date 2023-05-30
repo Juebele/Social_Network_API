@@ -81,3 +81,15 @@ client.connect()
                 if(err) throw err;
             });
     });
+
+    //this works to delete a thought
+    app.delete('/deletethought', (req, res) => {
+        const { id } = req.body; // Assuming the ID is provided as "id" in the request body
+        db.collection('thoughts').deleteOne(
+            { "_id": new ObjectId(id) }
+    )
+            .then(results => res.json(results))
+            .catch(err => {
+                if(err) throw err;
+            });
+    });
