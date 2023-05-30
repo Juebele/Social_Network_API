@@ -1,5 +1,6 @@
 const express = require('express');
 const { MongoClient } = require('mongodb');
+const { ObjectId } = require('mongodb');
 
 const app = express();
 const port = 3001;
@@ -29,8 +30,8 @@ client.connect()
 
     //crete new user
     app.post('/createuser', (req, res) => {
-        db.collection('newUser').insertOne(
-            { username: req.body.username, email: req.body.email, thoughts: req.body.email, friends: req.body.friends}
+        db.collection('users').insertOne(
+            { username: req.body.username, email: req.body.email, thoughts: req.body.thoughts, friends: req.body.friends}
         )
             .then(results => res.json(results))
             .catch(err => {
@@ -39,7 +40,7 @@ client.connect()
     });
 
     app.post('/createthought', (req, res) => {
-        db.collection('newThought').insertOne(
+        db.collection('thoughts').insertOne(
             { thoughtText: req.body.thoughtText, createdAt: req.body.createdAt, username: req.body.username, reactions: req.body.reactions}
         )
             .then(results => res.json(results))
@@ -56,4 +57,27 @@ client.connect()
         .catch(err => {
             if (err) throw err;
         });
+    });
+
+    //this should allow updating a user but I can't get this part to work. It does return a JSON but it's not updating anything
+    app.put('/updateuser', (req, res) => {
+        db.collection('users').updateOne(
+            {"user": "Darth Serious"}, {$set: {"user": "Darth Vader"}}
+        )
+            .then(results => res.json(results))
+            .catch(err => {
+                if (err) throw err;
+            });
+    });
+
+    //this works to delete a user if you put ' "id": "<userid>" ' into the request body in JSON format
+    app.delete('/deleteuser', (req, res) => {
+        const { id } = req.body; // Assuming the ID is provided as "id" in the request body
+        db.collection('users').deleteOne(
+            { "_id": new ObjectId(id) }
+    )
+            .then(results => res.json(results))
+            .catch(err => {
+                if(err) throw err;
+            });
     });
